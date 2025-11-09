@@ -39,3 +39,35 @@ func TestGuessLetter_UpperCaseDoesNotMatter(t *testing.T) {
 	assert.False(t, available, "Should be considered equal with the lower one")
 	assert.Equal(t, 1, g.wrongGuesses, "internal state should not change")
 }
+
+func TestIsWon(t *testing.T) {
+	g := NewGame("word")
+	assert.False(t, g.isWon(), "Did not reveal all the letters")
+	g.GuessLetter('w')
+	assert.False(t, g.isWon(), "Did not reveal all the letters")
+	g.GuessLetter('o')
+	assert.False(t, g.isWon(), "Did not reveal all the letters")
+	g.GuessLetter('d')
+	assert.False(t, g.isWon(), "Did not reveal all the letters")
+	g.GuessLetter('r')
+	assert.True(t, g.isWon(), "All the letters are revealed")
+}
+
+func TestIsLost(t *testing.T) {
+	g := NewGame("word")
+	g.maxWrong = 2
+	assert.Equal(t, 0, g.wrongGuesses, "No guesses made yet")
+	assert.False(t, g.isLost(), "Did not reach the max missed letters")
+	g.GuessLetter('w')
+	assert.Equal(t, 0, g.wrongGuesses, "it was a good guess")
+	assert.False(t, g.isLost(), "Did not reach the max missed letters")
+	g.GuessLetter('x')
+	assert.Equal(t, 1, g.wrongGuesses, "it was a wrong guess")
+	assert.False(t, g.isLost(), "Did not reach the max missed letters")
+	g.GuessLetter('d')
+	assert.Equal(t, 1, g.wrongGuesses, "it was a good guess")
+	assert.False(t, g.isLost(), "Did not reach the max missed letters")
+	g.GuessLetter('y')
+	assert.Equal(t, 2, g.wrongGuesses, "it was a wrong guess")
+	assert.True(t, g.isLost(), "Did reach the max missed letters")
+}
