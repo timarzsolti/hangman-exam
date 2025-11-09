@@ -5,8 +5,7 @@ import (
 )
 
 func main() {
-	ws := WordSelector{}
-	ws.SetupWords("words.txt")
+	ws := NewWordlSelector("words.txt")
 	selectedWord := ws.SelectRandomWord()
 
 	fmt.Println(selectedWord)

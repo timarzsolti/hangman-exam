@@ -10,12 +10,14 @@ type WordSelector struct {
 	words []string
 }
 
-func (ws *WordSelector) SetupWords(filename string) {
+func NewWordlSelector(filename string) *WordSelector {
+	ws := new(WordSelector)
 	words, err := ws.loadWordsFromFile(filename)
 	if err != nil {
 		words = ws.setupPredefinedWords()
 	}
 	ws.words = words
+	return ws
 }
 
 func (ws *WordSelector) loadWordsFromFile(filename string) ([]string, error) {
