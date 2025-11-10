@@ -11,11 +11,11 @@ func TestGuessLetter(t *testing.T) {
 
 	goodChar := g.GuessLetter('p')
 	assert.True(t, goodChar, "GuessLetter should return true if the character was not entered yet")
-	assert.Equal(t, []byte{'_', 'p', 'p', '_', '_'}, g.display, "Display should update correctly")
+	assert.Equal(t, []rune{'_', 'p', 'p', '_', '_'}, g.display, "Display should update correctly")
 
 	goodChar = g.GuessLetter('p')
 	assert.False(t, goodChar, "GuessLetter should return false if the character was already entered")
-	assert.Equal(t, []byte{'_', 'p', 'p', '_', '_'}, g.display, "display should not change")
+	assert.Equal(t, []rune{'_', 'p', 'p', '_', '_'}, g.display, "display should not change")
 	assert.Equal(t, 0, g.wrongGuesses, "internal state should not change")
 
 	goodChar = g.GuessLetter('z')

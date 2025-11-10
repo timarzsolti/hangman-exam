@@ -1,18 +1,21 @@
 package main
 
-import "unicode"
+import (
+	"slices"
+	"unicode"
+)
 
 type Game struct {
 	word         string
 	wrongGuesses int
-	usedLetters  map[byte]bool
-	display      []byte
+	usedLetters  []rune
+	display      []rune
 	charsGuessed int
 	maxWrong     int
 }
 
 func NewGame(word string) *Game {
-	display := make([]byte, len(word))
+	display := make([]rune, len(word))
 	for i := range display {
 		display[i] = '_'
 	}
@@ -22,21 +25,24 @@ func NewGame(word string) *Game {
 		display:      display,
 		wrongGuesses: 0,
 		maxWrong:     10,
-		usedLetters:  make(map[byte]bool),
+		usedLetters:  make([]rune, 0),
 		charsGuessed: 0,
 	}
 }
 
-func (g *Game) GuessLetter(letter byte) bool {
-	letter = toLower(letter)
-	if g.usedLetter(letter) {
+func (g *Game) usingALetter(letter rune) {
+	g.usedLetters = append(g.usedLetters, letter)
+}
+
+func (g *Game) GuessLetter(letter rune) bool {
+	letter = unicode.ToLower(letter)
+	if g.hasBeenUsed(letter) {
 		return false
 	}
-	g.usedLetters[letter] = true
+	g.usingALetter(letter)
 
 	correct := false
-	for i, c := range g.word {
-		ch := byte(c)
+	for i, ch := range g.word {
 		if ch == letter {
 			g.display[i] = ch
 			g.charsGuessed++
@@ -50,12 +56,8 @@ func (g *Game) GuessLetter(letter byte) bool {
 	return true
 }
 
-func (g *Game) usedLetter(letter byte) bool {
-	return g.usedLetters[letter]
-}
-
-func toLower(c byte) byte {
-	return byte(unicode.ToLower(rune(c)))
+func (g *Game) hasBeenUsed(letter rune) bool {
+	return slices.Contains(g.usedLetters, letter)
 }
 
 func (g *Game) isWon() bool {
@@ -64,4 +66,8 @@ func (g *Game) isWon() bool {
 
 func (g *Game) isLost() bool {
 	return g.wrongGuesses >= g.maxWrong
+}
+
+func (g *Game) isOver() bool {
+	return g.isLost() || g.isWon()
 }
